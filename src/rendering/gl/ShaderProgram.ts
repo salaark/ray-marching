@@ -1,4 +1,4 @@
-import {vec4, mat4} from 'gl-matrix';
+import {vec2, vec4, mat4} from 'gl-matrix';
 import Drawable from './Drawable';
 import {gl} from '../../globals';
 
@@ -19,11 +19,19 @@ export class Shader {
 };
 
 class ShaderProgram {
+  time: number;
+
   prog: WebGLProgram;
 
   attrPos: number;
 
   unifView: WebGLUniformLocation;
+
+  unifTime: WebGLUniformLocation;
+
+  unifAspect: WebGLUniformLocation;
+
+  unifCel: WebGLUniformLocation;
 
   constructor(shaders: Array<Shader>) {
     this.prog = gl.createProgram();
@@ -39,8 +47,15 @@ class ShaderProgram {
     // Raymarcher only draws a quad in screen space! No other attributes
     this.attrPos = gl.getAttribLocation(this.prog, "vs_Pos");
 
-    // TODO: add other attributes here
-    this.unifView   = gl.getUniformLocation(this.prog, "u_View");
+    this.unifView = gl.getUniformLocation(this.prog, "u_View");
+
+    this.unifAspect = gl.getUniformLocation(this.prog, "u_Aspect");
+
+    this.unifTime = gl.getUniformLocation(this.prog, "u_Time");
+
+    this.unifCel = gl.getUniformLocation(this.prog, "u_Cel");
+    
+    this.time = 0.0;
   }
 
   use() {
@@ -50,10 +65,22 @@ class ShaderProgram {
     }
   }
 
-  // TODO: add functions to modify uniforms
+  setCelFactor(cel: number) {
+    this.use();
+    if (this.unifCel !== -1) {
+      gl.uniform1f(this.unifCel, cel);
+    }
+  }
 
   draw(d: Drawable) {
     this.use();
+
+    gl.uniform1f(this.unifTime, this.time);
+    this.time += 0.01;
+
+    var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+    var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    gl.uniform1f(this.unifAspect, w/h);
 
     if (this.attrPos != -1 && d.bindPos()) {
       gl.enableVertexAttribArray(this.attrPos);

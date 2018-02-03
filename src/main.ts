@@ -9,7 +9,7 @@ import ShaderProgram, {Shader} from './rendering/gl/ShaderProgram';
 // Define an object with application parameters and button callbacks
 // This will be referred to by dat.GUI's functions that add GUI elements.
 const controls = {
-  // TODO: add any controls you want
+  'cel factor': 7.0
 };
 
 let screenQuad: Square;
@@ -25,7 +25,7 @@ function main() {
 
   // TODO: add any controls you need to the gui
   const gui = new DAT.GUI();
-  // E.G. gui.add(controls, 'tesselations', 0, 8).step(1);
+  gui.add(controls, 'cel factor', 2, 20).onChange(updateCel);
 
   // get canvas and webgl context
   const canvas = <HTMLCanvasElement> document.getElementById('canvas');
@@ -64,9 +64,6 @@ function main() {
     gl.viewport(0, 0, window.innerWidth, window.innerHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // TODO: get / calculate relevant uniforms to send to shader here
-    // TODO: send uniforms to shader
-
     // March!
     raymarchShader.draw(screenQuad);
 
@@ -77,6 +74,11 @@ function main() {
     // Tell the browser to call `tick` again whenever it renders a new frame
     requestAnimationFrame(tick);
   }
+
+  function updateCel() {
+    raymarchShader.setCelFactor(controls['cel factor']);
+  }
+  updateCel();
 
   window.addEventListener('resize', function() {
     setSize(window.innerWidth, window.innerHeight);
