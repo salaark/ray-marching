@@ -1,5 +1,5 @@
 # Ray Marching Implicit Surfaces
-https://salaark.github.io/ray-marching-salaark/
+Animated Yoshi scene using ray marching and implicit surfaces.
 
 ## Description
 My scene is an animated Yoshi sticking his tongue out. It is rendered using a ray-marching technique with implicit functions defining the geometry. I use lambert and blinn-phong shading models, but modified it with a Cel-shading technique tweakable by the cel factor parameter. I also created a sceneSDF mapping function that loops through the various colored SDFs in my scene to create more material variety. The animation uses hand-tweaked trigonometric curves with some absolute values. The camera and light source positions are fixed.
